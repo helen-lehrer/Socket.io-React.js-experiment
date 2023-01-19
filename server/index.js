@@ -18,6 +18,7 @@ const cors = require("cors");
 //allow our project to accept cors 
 app.use(cors());
 
+//this is built into Node
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -25,6 +26,15 @@ const io = new Server(server, {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
+});
+
+//listening to events
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+  socket.on("send_message", (data) => {
+    console.log(data);
+    socket.broadcast.emit("receive_message", data)
+  })
 });
 
 server.listen(3001, () => {
